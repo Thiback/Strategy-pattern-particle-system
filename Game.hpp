@@ -79,7 +79,7 @@ public:
 		height(height),
 		window(sf::VideoMode(this->width, this->height), "Particle system")
 	{
-		srand((unsigned int)this);
+		srand(time(NULL));
 		this->loadResources();
 
 		for (unsigned int i = 0; i < 60; ++i) {
@@ -113,8 +113,9 @@ public:
 				break;
 			case (sf::Event::MouseButtonPressed):
 				const sf::Vector2i mousePos = sf::Mouse::getPosition(this->window);
-				std::cout << "mouse was clicked at " << mousePos.x << " " << mousePos.y << std::endl;
-				if (this->button.isInBounds(sf::Vector2f(mousePos.x, mousePos.y))) {
+				const sf::Vector2f mousePosFloat(mousePos.x, mousePos.y);
+				std::cout << "Mouse was clicked at " << mousePos.x << " " << mousePos.y << std::endl;
+				if (this->button.isInBounds(mousePosFloat)) {
 					this->button.execute();
 				}
 				break;
