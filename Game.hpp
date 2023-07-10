@@ -84,9 +84,9 @@ public:
 
 		for (unsigned int i = 0; i < 60; ++i) {
 			Particle* current_particle = new Particle(
-				rand() % this->width,
-				rand() % this->height,
-				1 + (float)rand() / (float)(RAND_MAX)
+				{ (float)(rand() % this->width), (float)(rand() % this->height) },
+				1 + (float)rand() / (float)(RAND_MAX),
+				{static_cast<float>(rand() % 101) / 100.0f * 100.0f - 50.0f, static_cast<float>(rand() % 101) / 100.0f * 100.0f - 50.0f }
 			);
 			switch (rand() % 3) {
 			case 0:
@@ -123,6 +123,28 @@ public:
 		}
 	};
 
+	void update()
+	{
+		sf::FloatRect screenBoundaries({ 0, 0 }, sf::Vector2f({ (float)(this->width), (float)(this->height) }));
+		for (auto& it : this->particles) {
+			if (screenBoundaries.contains(it->getPosition()) == false) {
+				it->setPosition({ (float)(this->width) / 2, (float)(this->height) / 2 });
+				switch (rand() % 3) {
+				case 0:
+					it->setDrawStrategy(new SpriteDrawStrategy(this->sprites, rand() % this->sprites.size()));
+					break;
+				case 1:
+					it->setDrawStrategy(new TextDrawStrategy(&this->text, "ABCD"));
+					break;
+				case 2:
+					it->setDrawStrategy(new DotDrawStrategy(&this->dot));
+					break;
+				};
+			}
+			it->update();
+		}
+	}
+
 	void draw()
 	{
 		for (auto &it: this->particles)
@@ -136,6 +158,7 @@ public:
 		while (this->window.isOpen()) {
 			this->window.clear(sf::Color::Black);
 			this->pollEvents();
+			this->update();
 			this->draw();
 		}
 	}
